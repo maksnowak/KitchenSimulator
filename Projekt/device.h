@@ -17,3 +17,4 @@ public:
     void setName(std::string name);
     void setType(State type);
 };
+

@@ -17,4 +17,3 @@ void Device::setName(std::string new_name) {
 void Device::setType(State new_type) {
     type = new_type;
 }
-
