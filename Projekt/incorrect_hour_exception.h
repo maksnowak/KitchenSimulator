@@ -1,7 +1,7 @@
 #pragma once
 #include <stdexcept>
 
-class IncorrectMinuteException : public std::invalid_argument {
+class IncorrectHourException : public std::invalid_argument {
 public:
-    IncorrectMinuteException(unsigned short int hour);
+    IncorrectHourException(unsigned short int hour);
 };
