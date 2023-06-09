@@ -15,6 +15,13 @@ TEST_CASE("Time unit tests", "[time]") {
         CHECK(time.getMinute() == 30);
     }
 
+    SECTION("Setting incorrect values") {
+        CHECK_THROWS_AS(time.setHour(24), IncorrectHourException);
+        CHECK_THROWS_AS(time.setMinute(60), IncorrectMinuteException);
+        CHECK_THROWS_AS(time.setHour(25), IncorrectHourException);
+        CHECK_THROWS_AS(time.setMinute(61), IncorrectMinuteException);
+    }
+
     SECTION("Skipping time by a given number of minutes") {
         time.skip_by(30);
         CHECK(time.getHour() == 8);
