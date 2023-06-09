@@ -2,4 +2,7 @@
 .idea/
 cmake-build-debug
 CMakelists.txt
+
+# Executables
 main
+*.out
