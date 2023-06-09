@@ -8,6 +8,15 @@ TEST_CASE("Time unit tests", "[time]") {
     CHECK(time.getHour() == 8);
     CHECK(time.getMinute() == 0);
 
+    SECTION("Trying to create incorrect time objects") {
+        CHECK_THROWS_AS(Time(24, 0), IncorrectHourException);
+        CHECK_THROWS_AS(Time(22, 60), IncorrectMinuteException);
+        CHECK_THROWS_AS(Time(24, 60), IncorrectHourException);
+        CHECK_THROWS_AS(Time(25, 60), IncorrectHourException);
+        CHECK_THROWS_AS(Time(24, 61), IncorrectHourException);
+        CHECK_THROWS_AS(Time(25, 61), IncorrectHourException);
+    }
+
     SECTION("Setting new values") {
         time.setHour(12);
         time.setMinute(30);
