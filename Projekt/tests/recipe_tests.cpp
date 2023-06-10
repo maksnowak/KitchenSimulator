@@ -1,5 +1,6 @@
 #include "catch_amalgamated.hpp"
 #include "../recipe.h"
+#include "../no_ingredients_exception.h"
 
 // Example ingredients
 Ingredient ingredient1("First ingredient", IngredientType::meat, 100);
@@ -8,7 +9,7 @@ Ingredient ingredient3("Third ingredient", IngredientType::dairy, 300);
 Ingredient ingredient4("Fourth ingredient", IngredientType::grain, 130);
 
 TEST_CASE("Recipe tests", "[recipe]") {
-    Recipe recipe("Test recipe", 20, Difficulty::easy, {ingredient1, ingredient2});
+    Recipe recipe("Test recipe", 20, Difficulty::easy, {ingredient1, ingredient2}, {});
     CHECK(recipe.getName() == "Test recipe");
     CHECK(recipe.getTime() == 20);
     CHECK(recipe.getDifficulty() == Difficulty::easy);
@@ -35,8 +36,7 @@ TEST_CASE("Recipe tests", "[recipe]") {
     }
 
     SECTION("Setting recipe ingredients as an empty vector") {
-        recipe.setIngredients({});
-        CHECK(recipe.getIngredients().empty());
+        CHECK_THROWS_AS(recipe.setIngredients({}), NoIngredientsException);
     }
 
     SECTION("Adding ingredients to existing ones") {
@@ -60,11 +60,6 @@ TEST_CASE("Recipe tests", "[recipe]") {
     SECTION("Counting caloric value of recipe with added ingredients") {
         recipe.addIngredient(ingredient3);
         CHECK(recipe.caloricValue() == 600);
-    }
-
-    SECTION("Counting caloric value with empty ingredient list") {
-        recipe.setIngredients({});
-        CHECK(recipe.caloricValue() == 0);
     }
 
     SECTION("Sorting ingredients by caloric value (descending)") {

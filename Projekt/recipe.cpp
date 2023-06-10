@@ -4,8 +4,11 @@
 #include "recipe.h"
 #include "device.h"
 #include "ingredient.h"
+#include "no_ingredients_exception.h"
 
-Recipe::Recipe(std::string name, unsigned short time, Difficulty difficulty, std::vector<Ingredient> ingredients, std::vector<Device> devices) : name(name), time(time), difficulty(difficulty), ingredients(ingredients), devices(devices) {}
+Recipe::Recipe(std::string name, unsigned short time, Difficulty difficulty, std::vector<Ingredient> ingredients, std::vector<Device> devices) : name(name), time(time), difficulty(difficulty), devices(devices) {
+    setIngredients(ingredients);
+}
 
 std::string Recipe::getName() {
     return name;
@@ -40,6 +43,9 @@ void Recipe::setDifficulty(Difficulty new_difficulty) {
 }
 
 void Recipe::setIngredients(std::vector<Ingredient> new_ingredients) {
+    if (new_ingredients.size() == 0) {
+        throw NoIngredientsException();
+    }
     ingredients = new_ingredients;
 }
 
