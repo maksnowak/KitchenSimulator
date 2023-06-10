@@ -1,5 +1,4 @@
 #include "kitchen.h"
-#include <iostream>
 #include <vector>
 #include <algorithm>
 #include "time.h"
@@ -79,5 +78,19 @@ void Kitchen::cook(Recipe recipe) {
         throw MissingDevicesException();
     }
     for (Ingredient recipe_ingredient : recipe_ingredients) {
+        kitchen_ingredients.erase(std::find(kitchen_ingredients.begin(), kitchen_ingredients.end(), recipe_ingredient));
+    }
+    for (Device kitchen_device : kitchen_devices) {
+        if (std::find(recipe_devices.begin(), recipe_devices.end(), kitchen_device) != recipe_devices.end()) {
+            kitchen_device.setState(State::dirty);
+        }
+    }
+    time.skip_by(recipe.getTime());
+}
+
+void Kitchen::cleanDevices() {
+    std::vector<Device> kitchen_devices = getDevices();
+    for (Device kitchen_device : kitchen_devices) {
+        kitchen_device.setState(State::clean);
     }
 }
