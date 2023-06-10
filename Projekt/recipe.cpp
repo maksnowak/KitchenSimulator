@@ -68,3 +68,11 @@ void Recipe::addIngredient(Ingredient ingredient) {
 void Recipe::sortIngredients() {
     std::ranges::sort(ingredients, std::ranges::greater());
 }
+
+bool Recipe::operator==(const Recipe& other) const {
+    return name == other.name && time == other.time && difficulty == other.difficulty && ingredients == other.ingredients && devices == other.devices;
+}
+
+bool Recipe::operator!=(const Recipe& other) const {
+    return !(*this == other);
+}

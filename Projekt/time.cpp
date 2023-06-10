@@ -54,3 +54,11 @@ void Time::skip_by(unsigned short int new_minute) {
         hour %= 24;
     }
 }
+
+bool Time::operator==(const Time& other) const {
+    return hour == other.hour && minute == other.minute;
+}
+
+bool Time::operator!=(const Time& other) const {
+    return !(*this == other);
+}

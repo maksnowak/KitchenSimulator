@@ -32,4 +32,6 @@ class Recipe {
         unsigned short caloricValue();
         void addIngredient(Ingredient ingredient);
         void sortIngredients();
+        bool operator==(const Recipe& other) const;
+        bool operator!=(const Recipe& other) const;
 };

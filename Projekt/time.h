@@ -12,4 +12,6 @@ public:
     void setMinute(unsigned short int minute);
     void skip_to(unsigned short int hour, unsigned short int minute);
     void skip_by(unsigned short int minute);
+    bool operator==(const Time& other) const;
+    bool operator!=(const Time& other) const;
 };
