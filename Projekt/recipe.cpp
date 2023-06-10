@@ -2,9 +2,10 @@
 #include <vector>
 #include <algorithm>
 #include "recipe.h"
+#include "device.h"
 #include "ingredient.h"
 
-Recipe::Recipe(std::string name, unsigned short time, Difficulty difficulty, std::vector<Ingredient> ingredients) : name(name), time(time), difficulty(difficulty), ingredients(ingredients){}
+Recipe::Recipe(std::string name, unsigned short time, Difficulty difficulty, std::vector<Ingredient> ingredients, std::vector<Device> devices) : name(name), time(time), difficulty(difficulty), ingredients(ingredients), devices(devices) {}
 
 std::string Recipe::getName() {
     return name;
@@ -22,6 +23,10 @@ std::vector<Ingredient> Recipe::getIngredients() {
     return ingredients;
 }
 
+std::vector<Device> Recipe::getDevices() {
+    return devices;
+}
+
 void Recipe::setName(std::string new_name) {
     name = new_name;
 }
@@ -36,6 +41,10 @@ void Recipe::setDifficulty(Difficulty new_difficulty) {
 
 void Recipe::setIngredients(std::vector<Ingredient> new_ingredients) {
     ingredients = new_ingredients;
+}
+
+void Recipe::setDevices(std::vector<Device> new_devices) {
+    devices = new_devices;
 }
 
 unsigned short Recipe::caloricValue() {
