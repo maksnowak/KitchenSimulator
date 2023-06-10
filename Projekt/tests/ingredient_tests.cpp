@@ -26,14 +26,24 @@ TEST_CASE("Ingredient tests", "[ingredient]") {
         CHECK_FALSE(ingredient == other_ingredient);
     }
 
-    SECTION("Comparing two ingredients with the same caloric value") {
-        Ingredient other_ingredient("Other ingredient", IngredientType::vegetable, 100);
+    SECTION("Comparing two ingredients with the same caloric value, type and name") {
+        Ingredient other_ingredient("Test ingredient", IngredientType::meat, 100);
         CHECK_FALSE(ingredient < other_ingredient);
         CHECK(ingredient <= other_ingredient);
         CHECK_FALSE(other_ingredient > ingredient);
         CHECK(other_ingredient >= ingredient);
         CHECK(ingredient == other_ingredient);
         CHECK_FALSE(ingredient != other_ingredient);
+    }
+
+    SECTION("Comparing two ingredients with the same name but different caloric value and type") {
+        Ingredient other_ingredient("Test ingredient", IngredientType::vegetable, 200);
+        CHECK(ingredient < other_ingredient);
+        CHECK(ingredient <= other_ingredient);
+        CHECK(other_ingredient > ingredient);
+        CHECK(other_ingredient >= ingredient);
+        CHECK(ingredient != other_ingredient);
+        CHECK_FALSE(ingredient == other_ingredient);
     }
 
     SECTION("Comparing the ingredient with itself") {

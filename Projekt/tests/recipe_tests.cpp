@@ -28,9 +28,9 @@ TEST_CASE("Recipe tests", "[recipe]") {
 
     SECTION("Checking if device vector is correct"){
         CHECK(recipe.getDevices()[0].getName() == "Blender");
-        CHECK(recipe.getDevices()[0].getType() == State::clean);
+        CHECK(recipe.getDevices()[0].getState() == State::clean);
         CHECK(recipe.getDevices()[1].getName() == "Pot");
-        CHECK(recipe.getDevices()[1].getType() == State::dirty);
+        CHECK(recipe.getDevices()[1].getState() == State::dirty);
         CHECK(recipe.getDevices().size() == 2);
     }
 

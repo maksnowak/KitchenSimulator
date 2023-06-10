@@ -1,19 +1,27 @@
 #include "device.h"
 
-Device::Device(std::string name, State type) : name(name), type(type) {}
+Device::Device(std::string name, State state) : name(name), state(state) {}
 
 std::string Device::getName() {
     return name;
 }
 
-State Device::getType() {
-    return type;
+State Device::getState() {
+    return state;
 }
 
 void Device::setName(std::string new_name) {
     name = new_name;
 }
 
-void Device::setType(State new_type) {
-    type = new_type;
+void Device::setState(State new_state) {
+    state = new_state;
+}
+
+bool Device::operator==(const Device& other_device) const {
+    return name == other_device.name && state == other_device.state;
+}
+
+bool Device::operator!=(const Device& other_device) const {
+    return !(*this == other_device);
 }

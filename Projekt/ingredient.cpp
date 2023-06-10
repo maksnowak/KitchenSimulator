@@ -43,9 +43,9 @@ bool Ingredient::operator>=(const Ingredient& other_ingredient) const {
 }
 
 bool Ingredient::operator==(const Ingredient& other_ingredient) const {
-    return calories == other_ingredient.calories;
+    return calories == other_ingredient.calories && name == other_ingredient.name && type == other_ingredient.type;
 }
 
 bool Ingredient::operator!=(const Ingredient& other_ingredient) const {
-    return calories != other_ingredient.calories;
+    return !(*this == other_ingredient);
 }

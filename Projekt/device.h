@@ -9,12 +9,14 @@ enum class State {
 class Device {
 private:
     std::string name;
-    State type;
+    State state;
 public:
-    Device(std::string name, State type);
+    Device(std::string name, State state);
     std::string getName();
-    State getType();
+    State getState();
     void setName(std::string name);
-    void setType(State type);
+    void setState(State state);
+    bool operator==(const Device& other_device) const;
+    bool operator!=(const Device& other_device) const;
 };
 
