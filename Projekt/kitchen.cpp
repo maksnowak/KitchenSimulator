@@ -78,7 +78,8 @@ void Kitchen::cook(Recipe recipe) {
         throw MissingDevicesException();
     }
     for (Ingredient recipe_ingredient : recipe_ingredients) {
-        kitchen_ingredients.erase(std::find(kitchen_ingredients.begin(), kitchen_ingredients.end(), recipe_ingredient));
+        std::vector<Ingredient>::iterator ingredient_position = std::find(kitchen_ingredients.begin(), kitchen_ingredients.end(), recipe_ingredient);
+        kitchen_ingredients.erase(ingredient_position);
     }
     for (Device kitchen_device : kitchen_devices) {
         if (std::find(recipe_devices.begin(), recipe_devices.end(), kitchen_device) != recipe_devices.end()) {
