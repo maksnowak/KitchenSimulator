@@ -55,19 +55,15 @@ void Kitchen::buyIngredient(Ingredient new_ingredient) {
 }
 
 void Kitchen::cook(Recipe recipe) {
-    std::vector<Ingredient> recipe_ingredients = recipe.getIngredients();
-    std::vector<Device> recipe_devices = recipe.getDevices();
-    std::vector<Ingredient> kitchen_ingredients = getIngredients();
-    std::vector<Device> kitchen_devices = getDevices();
     std::vector<Ingredient> missing_ingredients;
     std::vector<Device> missing_devices;
-    for (Ingredient recipe_ingredient : recipe_ingredients) {
-        if (std::find(kitchen_ingredients.begin(), kitchen_ingredients.end(), recipe_ingredient) == kitchen_ingredients.end()) {
+    for (Ingredient recipe_ingredient : recipe.getIngredients()) {
+        if (std::find(ingredients.begin(), ingredients.end(), recipe_ingredient) == ingredients.end()) {
             missing_ingredients.push_back(recipe_ingredient);
         }
     }
-    for (Device recipe_device : recipe_devices) {
-        if (std::find(kitchen_devices.begin(), kitchen_devices.end(), recipe_device) == kitchen_devices.end()) {
+    for (Device recipe_device : recipe.getDevices()) {
+        if (std::find(devices.begin(), devices.end(), recipe_device) == devices.end()) {
             missing_devices.push_back(recipe_device);
         }
     }
@@ -77,12 +73,12 @@ void Kitchen::cook(Recipe recipe) {
     if (missing_devices.size() > 0) {
         throw MissingDevicesException();
     }
-    for (Ingredient recipe_ingredient : recipe_ingredients) {
-        std::vector<Ingredient>::iterator ingredient_position = std::find(kitchen_ingredients.begin(), kitchen_ingredients.end(), recipe_ingredient);
-        kitchen_ingredients.erase(ingredient_position);
+    for (Ingredient recipe_ingredient : recipe.getIngredients()) {
+        std::vector<Ingredient>::iterator ingredient_position = std::find(ingredients.begin(), ingredients.end(), recipe_ingredient);
+        ingredients.erase(ingredient_position);
     }
-    for (Device kitchen_device : kitchen_devices) {
-        if (std::find(recipe_devices.begin(), recipe_devices.end(), kitchen_device) != recipe_devices.end()) {
+    for (Device kitchen_device : devices) {
+        if (std::find(recipe.getDevices().begin(), recipe.getDevices().end(), kitchen_device) != recipe.getDevices().end()) {
             kitchen_device.setState(State::dirty);
         }
     }
