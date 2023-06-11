@@ -7,6 +7,7 @@
 #include "device.h"
 #include "missing_ingredients_exception.h"
 #include "missing_devices_exception.h"
+#include "dirty_device_exception.h"
 
 Kitchen::Kitchen(Time time, std::vector<Recipe> recipes, std::vector<Ingredient> ingredients, std::vector<Device> devices) : time(time), recipes(recipes), ingredients(ingredients), devices(devices) {}
 
@@ -57,14 +58,17 @@ void Kitchen::buyIngredient(Ingredient new_ingredient) {
 void Kitchen::cook(Recipe recipe) {
     std::vector<Ingredient> missing_ingredients;
     std::vector<Device> missing_devices;
-    for (Ingredient recipe_ingredient : recipe.getIngredients()) {
+    for (Ingredient& recipe_ingredient : recipe.getIngredients()) {
         if (std::find(ingredients.begin(), ingredients.end(), recipe_ingredient) == ingredients.end()) {
             missing_ingredients.push_back(recipe_ingredient);
         }
     }
-    for (Device recipe_device : recipe.getDevices()) {
+    for (Device& recipe_device : recipe.getDevices()) {
         if (std::find(devices.begin(), devices.end(), recipe_device) == devices.end()) {
             missing_devices.push_back(recipe_device);
+        }
+        else if (recipe_device.getState() == State::dirty) {
+            throw DirtyDeviceException();
         }
     }
     if (missing_ingredients.size() > 0) {
@@ -73,11 +77,11 @@ void Kitchen::cook(Recipe recipe) {
     if (missing_devices.size() > 0) {
         throw MissingDevicesException();
     }
-    for (Ingredient recipe_ingredient : recipe.getIngredients()) {
+    for (Ingredient& recipe_ingredient : recipe.getIngredients()) {
         std::vector<Ingredient>::iterator ingredient_position = std::find(ingredients.begin(), ingredients.end(), recipe_ingredient);
         ingredients.erase(ingredient_position);
     }
-    for (Device kitchen_device : devices) {
+    for (Device& kitchen_device : devices) {
         if (std::find(recipe.getDevices().begin(), recipe.getDevices().end(), kitchen_device) != recipe.getDevices().end()) {
             kitchen_device.setState(State::dirty);
         }
@@ -86,8 +90,7 @@ void Kitchen::cook(Recipe recipe) {
 }
 
 void Kitchen::cleanDevices() {
-    std::vector<Device> kitchen_devices = getDevices();
-    for (Device kitchen_device : kitchen_devices) {
+    for (Device& kitchen_device : devices) {
         kitchen_device.setState(State::clean);
     }
 }
