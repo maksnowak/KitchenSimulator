@@ -6,7 +6,7 @@
 #include "../dirty_device_exception.h"
 
 TEST_CASE("Kitchen tests", "[kitchen]") {
-    Time time1(8, 0);
+    Time time(8, 0);
     Ingredient ingredient1("First ingredient", IngredientType::meat, 100);
     Ingredient ingredient2("Second ingredient", IngredientType::vegetable, 200);
     Ingredient ingredient3("Third ingredient", IngredientType::dairy, 300);
@@ -17,9 +17,9 @@ TEST_CASE("Kitchen tests", "[kitchen]") {
     Device device4("Fork", State::dirty);
     Recipe recipe1("Test recipe", 20, Difficulty::easy, {ingredient1, ingredient2}, {device1, device2});
     Recipe recipe2("Test recipe 2", 30, Difficulty::medium, {ingredient3, ingredient4}, {device3});
-    Kitchen kitchen(time1, {recipe1}, {ingredient1, ingredient2}, {device1, device2});
+    Kitchen kitchen(time, {recipe1}, {ingredient1, ingredient2}, {device1, device2});
     SECTION("Getters") {
-        CHECK(kitchen.getTime() == time1);
+        CHECK(kitchen.getTime() == time);
         CHECK(kitchen.getRecipes() == std::vector<Recipe>({recipe1}));
         CHECK(kitchen.getIngredients() == std::vector<Ingredient>({ingredient1, ingredient2}));
         CHECK(kitchen.getDevices() == std::vector<Device>({device1, device2}));
