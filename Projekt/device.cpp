@@ -19,7 +19,7 @@ void Device::setState(State new_state) {
 }
 
 bool Device::operator==(const Device& other_device) const {
-    return name == other_device.name && state == other_device.state;
+    return name == other_device.name;
 }
 
 bool Device::operator!=(const Device& other_device) const {

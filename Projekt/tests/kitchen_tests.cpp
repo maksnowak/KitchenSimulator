@@ -60,20 +60,19 @@ TEST_CASE("Kitchen tests", "[kitchen]") {
         }
     }
 
-    // FIXME cooking is broken
-
-    // SECTION("Cook") {
-    //     kitchen.cleanDevices();
-    //     kitchen.cook(recipe1);
-    //     CHECK(kitchen.getTime() == Time(8, 20));
-    //     CHECK(kitchen.getDevices() == std::vector<Device>({device1, device2}));
-    //     CHECK(kitchen.getIngredients() == std::vector<Ingredient>({}));
-    //     kitchen.buyIngredient(ingredient3);
-    //     kitchen.buyIngredient(ingredient4);
-    //     kitchen.buyDevice(device3);
-    //     kitchen.cook(recipe2);
-    //     CHECK(kitchen.getTime() == Time(8, 50));
-    //     CHECK(kitchen.getDevices() == std::vector<Device>({device1, device2, device3}));
-    //     CHECK(kitchen.getIngredients() == std::vector<Ingredient>({}));
-    // }
+    SECTION("Cook") {
+        CHECK_THROWS_AS(kitchen.cook(recipe1), DirtyDeviceException);
+        kitchen.cleanDevices();
+        kitchen.cook(recipe1);
+        CHECK(kitchen.getTime() == Time(8, 20));
+        CHECK(kitchen.getDevices() == std::vector<Device>({device1, device2}));
+        CHECK(kitchen.getIngredients() == std::vector<Ingredient>({}));
+        kitchen.buyIngredient(ingredient3);
+        kitchen.buyIngredient(ingredient4);
+        kitchen.buyDevice(device3);
+        kitchen.cook(recipe2);
+        CHECK(kitchen.getTime() == Time(8, 50));
+        CHECK(kitchen.getDevices() == std::vector<Device>({device1, device2, device3}));
+        CHECK(kitchen.getIngredients() == std::vector<Ingredient>({}));
+    }
 }

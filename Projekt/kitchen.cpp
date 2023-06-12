@@ -64,11 +64,12 @@ void Kitchen::cook(Recipe recipe) {
         }
     }
     for (Device& recipe_device : recipe.getDevices()) {
+        Device kitchen_device = *std::find(devices.begin(), devices.end(), recipe_device);
+        if (kitchen_device.getState() == State::dirty) {
+            throw DirtyDeviceException();
+        }
         if (std::find(devices.begin(), devices.end(), recipe_device) == devices.end()) {
             missing_devices.push_back(recipe_device);
-        }
-        else if (recipe_device.getState() == State::dirty) {
-            throw DirtyDeviceException();
         }
     }
     if (missing_ingredients.size() > 0) {
