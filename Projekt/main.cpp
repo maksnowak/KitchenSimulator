@@ -1,12 +1,11 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <iomanip>
+#include "json.hpp"
 #include "kitchen.h"
-#include "recipe.h"
-#include "ingredient.h"
-#include "device.h"
-#include "time.h"
 
+using json = nlohmann::json;
 // Interface functions
 
 // Launching the program
@@ -156,7 +155,68 @@ int main() {
             }
         } else if (user_choice == MenuChoice::LoadSimulation) {
             std::cout << "Enter the file path to a saved simulation: " << std::endl;
-            // TODO: Load simulation from JSON file
+            std::string user_input;
+            std::cin >> user_input;
+            std::cout << "Starting simulation..." << std::endl;
+            std::ifstream file(user_input);
+            json jsonData;
+
+            if (file.is_open()) {
+                file >> jsonData;
+
+                uint hour = jsonData["Time"]["hour"];
+                uint min = jsonData["Time"]["min"];
+                Time time = Time(hour, min);
+
+                json recipes = jsonData["Recipies"];
+                std::vector<Recipe> recipe_list;
+
+                for (const auto& recipe : recipes) {
+                    std::string name = recipe["Name"];
+                    // uint recipe_time = jsonData["Time"];         //dostaje objekt zamias liczby
+                    std::string difficulty = recipe["Difficulty"];      //TODO: zamienic na enum difficulty
+
+                    json ingredients = recipe["Ingredients"];
+                    std::vector<Ingredient> recipe_ingredients;
+                    for (const auto& ingredient : ingredients) {
+                        std::string ingredientName = ingredient["Name"];
+                        std::string ingredientType = ingredient["Type"];        //TODO: zamienic na enum ingedientType
+                        uint calories = ingredient["Calories"];
+                        recipe_ingredients.push_back(Ingredient(ingredientName, IngredientType::dairy, calories));
+                    }
+
+                    json devices = recipe["Devices"];
+                    std::vector<Device> recipe_devices;
+                    for (const auto& device : devices) {
+                        std::string deviceName = device["Name"];
+                        recipe_devices.push_back(Device(deviceName, State::clean));
+                    }
+                    recipe_list.push_back(Recipe(name, 10, Difficulty::easy, recipe_ingredients, recipe_devices));
+                }
+
+                json ingredients = jsonData["Ingredients"];
+                std::vector<Ingredient> ingredient_list;
+                for (const auto& ingredient : ingredients) {
+                    std::string name = ingredient["Name"];
+                    IngredientType type = ingredient["Type"];
+                    uint calories = ingredient["Calories"];
+                    ingredient_list.push_back(Ingredient(name, type, calories));
+                }
+
+                json devices = jsonData["Devices"];
+                std::vector<Device> device_list;
+                for (const auto& device : devices) {
+                    std::string name = device["Name"];
+                    std::string state = device["State"];
+                    device_list.push_back(Device(name, State::clean));
+                }
+
+                Kitchen kitchen = Kitchen(time, recipe_list, ingredient_list, device_list);
+                std::cout << "Simulation loaded successfully!" << std::endl;
+
+            } else {
+                std::cout << "Failed to open the file." << std::endl;
+            }
             break;
         } else {
             std::cout << "Invalid choice!" << std::endl;
