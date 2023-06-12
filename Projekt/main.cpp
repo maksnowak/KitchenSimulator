@@ -86,43 +86,51 @@ EndDayChoice getEndDayChoice() {
 }
 
 int main() {
-    // FIXME: everything should be in a loop
-    mainMenu();
-    MenuChoice user_choice = getMenuChoice();
-    if (user_choice == MenuChoice::Exit) {
-        std::cout << "Exiting..." << std::endl;
-        return 0;
-    }
-    else if (user_choice == MenuChoice::NewSimulation) {
-        std::cout << "Creating new simulation..." << std::endl;
-        Kitchen simulation(Time(8, 0), std::vector<Recipe>(), std::vector<Ingredient>(), std::vector<Device>());
-        std::cout << "Done!" << std::endl;
-        std::cout << "Current time: ";
-        std::cout << std::setfill('0') << std::setw(2) << simulation.getTime().getHour();
-        std::cout << ":";
-        std::cout << std::setfill('0') << std::setw(2) << simulation.getTime().getMinute() << std::endl;
-        actionMenu();
-        ActionChoice action_choice = getActionChoice();
-        // TODO: Implement actions
-        if (action_choice == ActionChoice::EndDay) {
-            endOfDayMenu();
-            EndDayChoice end_day_choice = getEndDayChoice();
-            if (end_day_choice == EndDayChoice::Yes) {
-                std::cout << "Enter the file path to save the simulation: " << std::endl;
-                // TODO: Save simulation to JSON file
-            } else if (end_day_choice == EndDayChoice::No) {
-                std::cout << "Exiting..." << std::endl;
-                return 0;
-            } else {
-                std::cout << "Invalid choice!" << std::endl;
+    while (true) {
+        mainMenu();
+        MenuChoice user_choice = getMenuChoice();
+        if (user_choice == MenuChoice::Exit) {
+            std::cout << "Exiting..." << std::endl;
+            break;
+        } else if (user_choice == MenuChoice::NewSimulation) {
+            while (true) {
+                std::cout << "Creating new simulation..." << std::endl;
+                Kitchen simulation(Time(8, 0), std::vector<Recipe>(), std::vector<Ingredient>(), std::vector<Device>());
+                std::cout << "Done!" << std::endl;
+                std::cout << "Current time: ";
+                std::cout << std::setfill('0') << std::setw(2) << simulation.getTime().getHour();
+                std::cout << ":";
+                std::cout << std::setfill('0') << std::setw(2) << simulation.getTime().getMinute() << std::endl;
+                actionMenu();
+                ActionChoice action_choice = getActionChoice();
+                // TODO: Implement actions
+                if (action_choice == ActionChoice::EndDay) {
+                    while (true) {
+                        endOfDayMenu();
+                        EndDayChoice end_day_choice = getEndDayChoice();
+                        if (end_day_choice == EndDayChoice::Yes) {
+                            std::cout << "Enter the file path to save the simulation: " << std::endl;
+                            // TODO: Save simulation to JSON file
+                            break;
+                        } else if (end_day_choice == EndDayChoice::No) {
+                            std::cout << "Exiting..." << std::endl;
+                            break;
+                        } else {
+                            std::cout << "Invalid choice!" << std::endl;
+                            continue;
+                        }
+                    }
+                    break;
+                }
             }
+        } else if (user_choice == MenuChoice::LoadSimulation) {
+            std::cout << "Enter the file path to a saved simulation: " << std::endl;
+            // TODO: Load simulation from JSON file
+            break;
+        } else {
+            std::cout << "Invalid choice!" << std::endl;
+            continue;
         }
     }
-    else if (user_choice == MenuChoice::LoadSimulation) {
-        std::cout << "Enter the file path to a saved simulation: " << std::endl;
-        // TODO: Load simulation from JSON file
-    }
-    else {
-        std::cout << "Invalid choice!" << std::endl;
-    }
+    return 0;
 }
