@@ -85,6 +85,30 @@ EndDayChoice getEndDayChoice() {
     return static_cast<EndDayChoice>(choice);
 }
 
+// Cooking interface
+
+void cookMenu(Kitchen& simulation) {
+    if (simulation.getRecipes().size() == 0) {
+        std::cout << "You don't have any recipes!" << std::endl;
+    }
+    else {
+        std::cout << "Choose a recipe to cook: " << std::endl;
+        for (unsigned long i = 0; i < simulation.getRecipes().size(); i++) {
+            std::cout << i + 1 << ". " << simulation.getRecipes()[i].getName() << std::endl;
+        }
+        int choice;
+        std::cin >> choice;
+        try {
+            simulation.cook(simulation.getRecipes()[choice - 1]);
+            std::cout << "Cooked " << simulation.getRecipes()[choice - 1].getName() << "!" << std::endl;
+            std::cout << "Time elapsed: " << simulation.getRecipes()[choice -1].getTime() << " minutes" << std::endl;
+        }
+        catch (std::exception& e) {
+            std::cout << e.what() << std::endl;
+        }
+    }
+}
+
 int main() {
     while (true) {
         mainMenu();
@@ -93,18 +117,21 @@ int main() {
             std::cout << "Exiting..." << std::endl;
             break;
         } else if (user_choice == MenuChoice::NewSimulation) {
+            std::cout << "Creating new simulation..." << std::endl;
+            Kitchen simulation(Time(8, 0), std::vector<Recipe>(), std::vector<Ingredient>(), std::vector<Device>());
+            std::cout << "Done!" << std::endl;
             while (true) {
-                std::cout << "Creating new simulation..." << std::endl;
-                Kitchen simulation(Time(8, 0), std::vector<Recipe>(), std::vector<Ingredient>(), std::vector<Device>());
-                std::cout << "Done!" << std::endl;
                 std::cout << "Current time: ";
                 std::cout << std::setfill('0') << std::setw(2) << simulation.getTime().getHour();
                 std::cout << ":";
                 std::cout << std::setfill('0') << std::setw(2) << simulation.getTime().getMinute() << std::endl;
                 actionMenu();
                 ActionChoice action_choice = getActionChoice();
-                // TODO: Implement actions
-                if (action_choice == ActionChoice::EndDay) {
+                if (action_choice == ActionChoice::Cook) {
+                    cookMenu(simulation);
+                    continue;
+                }
+                else if (action_choice == ActionChoice::EndDay) {
                     while (true) {
                         endOfDayMenu();
                         EndDayChoice end_day_choice = getEndDayChoice();
@@ -121,6 +148,10 @@ int main() {
                         }
                     }
                     break;
+                }
+                else {
+                    std::cout << "Invalid choice!" << std::endl;
+                    continue;
                 }
             }
         } else if (user_choice == MenuChoice::LoadSimulation) {
