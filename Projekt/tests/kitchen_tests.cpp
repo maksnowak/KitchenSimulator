@@ -15,8 +15,10 @@ TEST_CASE("Kitchen tests", "[kitchen]") {
     Device device2("Pot", State::dirty);
     Device device3("Knife", State::clean);
     Device device4("Fork", State::dirty);
+    Device device5("Oven", State::clean);
     Recipe recipe1("Test recipe", 20, Difficulty::easy, {ingredient1, ingredient2}, {device1, device2});
     Recipe recipe2("Test recipe 2", 30, Difficulty::medium, {ingredient3, ingredient4}, {device3});
+    Recipe recipe3("Test recipe 3", 40, Difficulty::hard, {ingredient1, ingredient2}, {device5});
     Kitchen kitchen(time, {recipe1}, {ingredient1, ingredient2}, {device1, device2});
     SECTION("Getters") {
         CHECK(kitchen.getTime() == time);
@@ -74,5 +76,14 @@ TEST_CASE("Kitchen tests", "[kitchen]") {
         CHECK(kitchen.getTime() == Time(8, 50));
         CHECK(kitchen.getDevices() == std::vector<Device>({device1, device2, device3}));
         CHECK(kitchen.getIngredients() == std::vector<Ingredient>({}));
+    }
+
+    SECTION("Exceptions") {
+        CHECK_THROWS_AS(kitchen.cook(recipe3), MissingDevicesException);
+        kitchen.cleanDevices();
+        kitchen.cook(recipe1);
+        CHECK_THROWS_AS(kitchen.cook(recipe1), DirtyDeviceException);
+        kitchen.cleanDevices();
+        CHECK_THROWS_AS(kitchen.cook(recipe1), MissingIngredientsException);
     }
 }
