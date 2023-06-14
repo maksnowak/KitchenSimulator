@@ -4,6 +4,14 @@
 #include <iomanip>
 #include "json.hpp"
 #include "kitchen.h"
+#include "time.h"
+#include "recipe.h"
+#include "ingredient.h"
+#include "device.h"
+#include "missing_ingredients_exception.h"
+#include "missing_devices_exception.h"
+#include "dirty_device_exception.h"
+
 
 using json = nlohmann::json;
 // Interface functions
@@ -195,6 +203,76 @@ void cookMenu(Kitchen& simulation) {
     }
 }
 
+// New recipe interface
+
+void newRecipeMenu(Kitchen& simulation) {
+    if (simulation.getIngredients().size() == 0)
+        std::cout << "You cannot make a recipe without ingredients!" << std::endl;
+    else {
+        std::cout << "Enter the name of the recipe: ";
+        std::string name;
+        std::cin >> name;
+        std::cout << "How long does it take to cook the recipe? (in minutes): ";
+        unsigned int time;
+        std::cin >> time;
+        std::cout << "What is the difficulty of the recipe? (easy, medium, hard): ";
+        std::string difficulty;
+        std::cin >> difficulty;
+        std::cout << "Which ingredient does the recipe use? (enter the number): " << std::endl;
+        char all_added_ingredients_choice = 'n';
+        std::vector<Ingredient> ingredients;
+        do {
+            for (unsigned long i = 0; i < simulation.getIngredients().size(); i++) {
+                std::cout << i + 1 << ". " << simulation.getIngredients()[i].getName() << std::endl;
+            }
+            unsigned int choice;
+            std::cin >> choice;
+            if (std::find(ingredients.begin(), ingredients.end(), simulation.getIngredients()[choice - 1]) != ingredients.end())
+                std::cout << "You have already added this ingredient!" << std::endl;
+            else {
+                try {
+                    ingredients.push_back(simulation.getIngredients()[choice - 1]);
+                }
+                catch (std::exception& e) {
+                    std::cout << e.what() << std::endl;
+                }
+            }
+            std::cout << "Would you like to add another ingredient? (y/n): ";
+            std::cin >> all_added_ingredients_choice;
+        } while (all_added_ingredients_choice == 'y');
+        std::vector<Device> devices;
+        if (simulation.getDevices().size() != 0) {
+            std::cout << "Which device does the recipe use? (enter the number): " << std::endl;
+            char all_added_devices_choice = 'n';
+            do {
+                for (unsigned long i = 0; i < simulation.getDevices().size(); i++) {
+                    std::cout << i + 1 << ". " << simulation.getDevices()[i].getName() << std::endl;
+                }
+                unsigned int choice;
+                std::cin >> choice;
+                if (std::find(devices.begin(), devices.end(), simulation.getDevices()[choice - 1]) != devices.end())
+                    std::cout << "You have already added this device!" << std::endl;
+                else
+                    try {
+                        devices.push_back(simulation.getDevices()[choice - 1]);
+                    }
+                    catch (std::exception& e) {
+                        std::cout << e.what() << std::endl;
+                    }
+                std::cout << "Would you like to add another device? (y/n): ";
+                std::cin >> all_added_devices_choice;
+            } while (all_added_devices_choice == 'y');
+        }
+        try {
+            simulation.addRecipe(Recipe(name, time, to_difficulty(difficulty), ingredients, devices));
+            std::cout << "Added recipe " << name << "!" << std::endl;
+        }
+        catch (std::exception& e) {
+            std::cout << e.what() << std::endl;
+        }
+    }
+}
+
 int main() {
     while (true) {
         mainMenu();
@@ -215,6 +293,10 @@ int main() {
                 ActionChoice action_choice = getActionChoice();
                 if (action_choice == ActionChoice::Cook) {
                     cookMenu(simulation);
+                    continue;
+                }
+                else if (action_choice == ActionChoice::NewRecipe) {
+                    newRecipeMenu(simulation);
                     continue;
                 }
                 else if (action_choice == ActionChoice::EndDay) {
