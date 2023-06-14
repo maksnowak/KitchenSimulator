@@ -137,7 +137,7 @@ void actionMenu() {
     std::cout << "7. Buy a new device" << std::endl;
     std::cout << "8. Clean all devices" << std::endl;
     std::cout << "9. Take a break" << std::endl;
-    std::cout << "0. End the day" << std::endl;
+    std::cout << "0. Exit the simulation" << std::endl;
 }
 
 enum class ActionChoice {
@@ -160,23 +160,22 @@ ActionChoice getActionChoice() {
     return static_cast<ActionChoice>(choice);
 }
 
-void endOfDayMenu() {
-    std::cout << "You have finished the day" << std::endl;
+void exitSimulationMenu() {
     std::cout << "Would you like to save the simulation?" << std::endl;
     std::cout << "1. Yes" << std::endl;
     std::cout << "2. No" << std::endl;
 }
 
-enum class EndDayChoice {
+enum class exitSimulationChoice {
     Yes = 1,
     No = 2
 };
 
-EndDayChoice getEndDayChoice() {
+exitSimulationChoice getEndDayChoice() {
     std::cout << "Enter your choice: ";
     int choice;
     std::cin >> choice;
-    return static_cast<EndDayChoice>(choice);
+    return static_cast<exitSimulationChoice>(choice);
 }
 
 // Cooking interface
@@ -242,6 +241,7 @@ void newRecipeMenu(Kitchen& simulation) {
         } while (all_added_ingredients_choice == 'y');
         std::vector<Device> devices;
         if (simulation.getDevices().size() != 0) {
+            //TODO: you should be able to make a recipe without a device too
             std::cout << "Which device does the recipe use? (enter the number): " << std::endl;
             char all_added_devices_choice = 'n';
             do {
@@ -273,6 +273,242 @@ void newRecipeMenu(Kitchen& simulation) {
     }
 }
 
+// All recipes interface
+
+void seeRecipesMenu(Kitchen& simulation) {
+    if (simulation.getRecipes().size() == 0)
+        std::cout << "You don't have any recipes!" << std::endl;
+    else {
+        std::cout << "Your recipes: " << std::endl;
+        for (unsigned long i = 0; i < simulation.getRecipes().size(); i++) {
+            std::cout << simulation.getRecipes()[i].getName() << std::endl;
+            std::cout << "Difficulty: " << difficulty_to_string(simulation.getRecipes()[i].getDifficulty()) << std::endl;
+            std::cout << "Time: " << simulation.getRecipes()[i].getTime() << " minutes" << std::endl;
+            std::cout << "Ingredients: " << std::endl;
+            for (unsigned long j = 0; j < simulation.getRecipes()[i].getIngredients().size(); j++) {
+                std::cout << "\t" << simulation.getRecipes()[i].getIngredients()[j].getName() << std::endl;
+            }
+            std::cout << "Devices: " << std::endl;
+            for (unsigned long j = 0; j < simulation.getRecipes()[i].getDevices().size(); j++) {
+                std::cout << "\t" << simulation.getRecipes()[i].getDevices()[j].getName() << std::endl;
+            }
+            std::cout << "Caloric value: " << simulation.getRecipes()[i].caloricValue() << std::endl;
+            std::cout << std::endl;
+        }
+    }
+}
+
+// All ingredients interface
+
+void seeIngredientsMenu(Kitchen& simulation) {
+    if (simulation.getIngredients().size() == 0)
+        std::cout << "You don't have any ingredients!" << std::endl;
+    else {
+        std::cout << "Your ingredients: " << std::endl;
+        for (unsigned long i = 0; i < simulation.getIngredients().size(); i++) {
+            std::cout << simulation.getIngredients()[i].getName() << std::endl;
+            std::cout << "Type: " << type_to_string(simulation.getIngredients()[i].getType()) << std::endl;
+            std::cout << "Calories: " << simulation.getIngredients()[i].getCalories() << std::endl;
+            std::cout << std::endl;
+        }
+    }
+}
+
+// All devices interface
+
+void seeDevicesMenu(Kitchen& simulation) {
+    if (simulation.getDevices().size() == 0)
+        std::cout << "You don't have any devices!" << std::endl;
+    else {
+        std::cout << "Your devices: " << std::endl;
+        for (unsigned long i = 0; i < simulation.getDevices().size(); i++) {
+            std::cout << simulation.getDevices()[i].getName() << std::endl;
+            std::cout << "State: " << state_to_string(simulation.getDevices()[i].getState()) << std::endl;
+            std::cout << std::endl;
+        }
+    }
+}
+
+// Buying ingredients interface
+
+void buyIngredientMenu(Kitchen& simulation) {
+    std::cout << "Enter the ingredients name: ";
+    std::string name;
+    std::cin >> name;
+    std::cout << "Enter the ingredient's type: (meat, vegetable, fruit, grain, dairy, seasoning, other): ";
+    std::string type;
+    std::cin >> type;
+    std::cout << "Enter the ingredient's calories: ";
+    unsigned int calories;
+    std::cin >> calories;
+    try {
+        simulation.buyIngredient(Ingredient(name, to_ingredient_type(type), calories));
+        std::cout << "Added ingredient " << name << "!" << std::endl;
+    }
+    catch (std::exception& e) {
+        std::cout << e.what() << std::endl;
+    }
+}
+
+void buyDeviceMenu(Kitchen& simulation) {
+    std::cout << "Enter the device's name: ";
+    std::string name;
+    std::cin >> name;
+    try {
+        simulation.buyDevice(Device(name, State::clean));
+        std::cout << "Added device " << name << "!" << std::endl;
+    }
+    catch (std::exception& e) {
+        std::cout << e.what() << std::endl;
+    }
+}
+
+// Cleaning devices interface
+
+void cleanDeviceMenu(Kitchen& simulation) {
+    simulation.cleanDevices();
+    std::cout << "Cleaned all devices!" << std::endl;
+}
+
+// Taking a break interface
+
+void takeBreakMenu(Kitchen& simulation) {
+    std::cout << "How long do you want to take a break for? (in minutes): ";
+    unsigned int minutes;
+    std::cin >> minutes;
+    simulation.getTime().skip_by(minutes);
+    std::cout << "Took a break for " << minutes << " minutes!" << std::endl;
+}
+
+// Main interface
+
+void simulationInterface(Kitchen& simulation) {
+    while (true) {
+        std::cout << "Current time: ";
+        std::cout << std::setfill('0') << std::setw(2) << simulation.getTime().getHour();
+        std::cout << ":";
+        std::cout << std::setfill('0') << std::setw(2) << simulation.getTime().getMinute() << std::endl;
+        actionMenu();
+        ActionChoice action_choice = getActionChoice();
+        if (action_choice == ActionChoice::Cook) {
+            cookMenu(simulation);
+            continue;
+        }
+        else if (action_choice == ActionChoice::NewRecipe) {
+            newRecipeMenu(simulation);
+            continue;
+        }
+        else if (action_choice == ActionChoice::SeeRecipes) {
+            seeRecipesMenu(simulation);
+            continue;
+        }
+        else if (action_choice == ActionChoice::SeeIngredients) {
+            seeIngredientsMenu(simulation);
+            continue;
+        }
+        else if (action_choice == ActionChoice::SeeDevices) {
+            seeDevicesMenu(simulation);
+            continue;
+        }
+        else if (action_choice == ActionChoice::BuyIngredient) {
+            buyIngredientMenu(simulation);
+            continue;
+        }
+        else if (action_choice == ActionChoice::BuyDevice) {
+            buyDeviceMenu(simulation);
+            continue;
+        }
+        else if (action_choice == ActionChoice::CleanDevices) {
+            cleanDeviceMenu(simulation);
+            continue;
+        }
+        else if (action_choice == ActionChoice::TakeBreak) {
+            takeBreakMenu(simulation);
+            continue;
+        }
+        else if (action_choice == ActionChoice::EndDay) {
+            while (true) {
+                exitSimulationMenu();
+                exitSimulationChoice end_day_choice = getEndDayChoice();
+                if (end_day_choice == exitSimulationChoice::Yes) {
+                    std::cout << "Enter the file path to save the simulation: " << std::endl;
+                    std::string user_input;
+                    std::cin >> user_input;
+                    std::cout << "Saving simulation..." << std::endl;
+                    std::ofstream file(user_input);
+
+                    json jsonData;
+                    jsonData["Time"]["hour"] = simulation.getTime().getHour();
+                    jsonData["Time"]["min"] = simulation.getTime().getMinute();
+
+                    json recipes;
+                    for (Recipe& recipe : simulation.getRecipes()) {
+                        json recipe_json;
+                        recipe_json["Name"] = recipe.getName();
+                        recipe_json["Time"] = recipe.getTime();
+                        recipe_json["Difficulty"] = difficulty_to_string(recipe.getDifficulty());
+
+                        json ingredients;
+                        for (Ingredient& ingredient : recipe.getIngredients()) {
+                            json ingredient_json;
+                            ingredient_json["Name"] = ingredient.getName();
+                            ingredient_json["Type"] = type_to_string(ingredient.getType());
+                            ingredient_json["Calories"] = ingredient.getCalories();
+                            ingredients.push_back(ingredient_json);
+                        }
+                        recipe_json["Ingredients"] = ingredients;
+
+                        json devices;
+                        for (Device& device : recipe.getDevices()) {
+                            json device_json;
+                            device_json["Name"] = device.getName();
+                            devices.push_back(device_json);
+                        }
+                        recipe_json["Devices"] = devices;
+                        recipes.push_back(recipe_json);
+                    }
+                    jsonData["Recipes"] = recipes;
+
+                    json kitchen_ingredients;
+                    for (Ingredient& ingredient : simulation.getIngredients()) {
+                        json ingredient_json;
+                        ingredient_json["Name"] = ingredient.getName();
+                        ingredient_json["Type"] = type_to_string(ingredient.getType());
+                        ingredient_json["Calories"] = ingredient.getCalories();
+                        kitchen_ingredients.push_back(ingredient_json);
+                    }
+                    jsonData["Kitchen ingredients"] = kitchen_ingredients;
+
+                    json kitchen_devices;
+                    for (Device& device : simulation.getDevices()) {
+                        json device_json;
+                        device_json["Name"] = device.getName();
+                        device_json["State"] = state_to_string(device.getState());
+                        kitchen_devices.push_back(device_json);
+                    }
+                    jsonData["Kitchen devices"] = kitchen_devices;
+                    file << jsonData << std::endl;
+                    file.close();
+                    break;
+                } else if (end_day_choice == exitSimulationChoice::No) {
+                    std::cout << "Exiting..." << std::endl;
+                    break;
+                } else {
+                    std::cout << "Invalid choice!" << std::endl;
+                    continue;
+                }
+            }
+            break;
+        }
+        else {
+            std::cout << "Invalid choice!" << std::endl;
+            continue;
+        }
+    }
+}
+
+//FIXME: the program enters the infinite loop when the name has a space in it
+
 int main() {
     while (true) {
         mainMenu();
@@ -284,98 +520,7 @@ int main() {
             std::cout << "Creating new simulation..." << std::endl;
             Kitchen simulation(Time(8, 0), std::vector<Recipe>(), std::vector<Ingredient>(), std::vector<Device>());
             std::cout << "Done!" << std::endl;
-            while (true) {
-                std::cout << "Current time: ";
-                std::cout << std::setfill('0') << std::setw(2) << simulation.getTime().getHour();
-                std::cout << ":";
-                std::cout << std::setfill('0') << std::setw(2) << simulation.getTime().getMinute() << std::endl;
-                actionMenu();
-                ActionChoice action_choice = getActionChoice();
-                if (action_choice == ActionChoice::Cook) {
-                    cookMenu(simulation);
-                    continue;
-                }
-                else if (action_choice == ActionChoice::NewRecipe) {
-                    newRecipeMenu(simulation);
-                    continue;
-                }
-                else if (action_choice == ActionChoice::EndDay) {
-                    while (true) {
-                        endOfDayMenu();
-                        EndDayChoice end_day_choice = getEndDayChoice();
-                        if (end_day_choice == EndDayChoice::Yes) {
-                            std::cout << "Enter the file path to save the simulation: " << std::endl;
-                            std::string user_input;
-                            std::cin >> user_input;
-                            std::cout << "Saving simulation..." << std::endl;
-                            std::ofstream file(user_input);
-
-                            json jsonData;
-                            jsonData["Time"]["hour"] = simulation.getTime().getHour();
-                            jsonData["Time"]["min"] = simulation.getTime().getMinute();
-
-                            json recipes;
-                            for (Recipe& recipe : simulation.getRecipes()) {
-                                json recipe_json;
-                                recipe_json["Name"] = recipe.getName();
-                                recipe_json["Time"] = recipe.getTime();
-                                recipe_json["Difficulty"] = difficulty_to_string(recipe.getDifficulty());
-
-                                json ingredients;
-                                for (Ingredient& ingredient : recipe.getIngredients()) {
-                                    json ingredient_json;
-                                    ingredient_json["Name"] = ingredient.getName();
-                                    ingredient_json["Type"] = type_to_string(ingredient.getType());
-                                    ingredient_json["Calories"] = ingredient.getCalories();
-                                    ingredients.push_back(ingredient_json);
-                                }
-                                recipe_json["Ingredients"] = ingredients;
-
-                                json devices;
-                                for (Device& device : recipe.getDevices()) {
-                                    json device_json;
-                                    device_json["Name"] = device.getName();
-                                    devices.push_back(device_json);
-                                }
-                                recipe_json["Devices"] = devices;
-                                recipes.push_back(recipe_json);
-                            }
-                            json kitchen_ingredients;
-                            for (Ingredient& ingredient : simulation.getIngredients()) {
-                                json ingredient_json;
-                                ingredient_json["Name"] = ingredient.getName();
-                                ingredient_json["Type"] = type_to_string(ingredient.getType());
-                                ingredient_json["Calories"] = ingredient.getCalories();
-                                kitchen_ingredients.push_back(ingredient_json);
-                            }
-                            jsonData["Kitchen ingredients"] = kitchen_ingredients;
-
-                            json kitchen_devices;
-                            for (Device& device : simulation.getDevices()) {
-                                json device_json;
-                                device_json["Name"] = device.getName();
-                                device_json["State"] = state_to_string(device.getState());
-                                kitchen_devices.push_back(device_json);
-                            }
-                            jsonData["Kitchen devices"] = kitchen_devices;
-                            file << jsonData << std::endl;
-                            file.close();
-                            break;
-                        } else if (end_day_choice == EndDayChoice::No) {
-                            std::cout << "Exiting..." << std::endl;
-                            break;
-                        } else {
-                            std::cout << "Invalid choice!" << std::endl;
-                            continue;
-                        }
-                    }
-                    break;
-                }
-                else {
-                    std::cout << "Invalid choice!" << std::endl;
-                    continue;
-                }
-            }
+            simulationInterface(simulation);
         } else if (user_choice == MenuChoice::LoadSimulation) {
             std::cout << "Enter the file path to a saved simulation: " << std::endl;
             std::string user_input;
@@ -391,7 +536,7 @@ int main() {
                 uint min = jsonData["Time"]["min"];
                 Time time = Time(hour, min);
 
-                json recipes = jsonData["Recipies"];
+                json recipes = jsonData["Recipes"];
                 std::vector<Recipe> recipe_list;
 
                 for (const auto& recipe : recipes) {
@@ -436,11 +581,10 @@ int main() {
                 file.close();
                 Kitchen kitchen = Kitchen(time, recipe_list, ingredient_list, device_list);
                 std::cout << "Simulation loaded successfully!" << std::endl;
-
+                simulationInterface(kitchen);
             } else {
                 std::cout << "Failed to open the file." << std::endl;
             }
-            break;
         } else {
             std::cout << "Invalid choice!" << std::endl;
             continue;
