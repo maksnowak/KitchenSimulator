@@ -210,7 +210,7 @@ void newRecipeMenu(Kitchen& simulation) {
     else {
         std::cout << "Enter the name of the recipe: ";
         std::string name;
-        std::cin >> name;
+        std::getline(std::cin >> std::ws, name);
         std::cout << "How long does it take to cook the recipe? (in minutes): ";
         unsigned int time;
         std::cin >> time;
@@ -334,7 +334,7 @@ void seeDevicesMenu(Kitchen& simulation) {
 void buyIngredientMenu(Kitchen& simulation) {
     std::cout << "Enter the ingredients name: ";
     std::string name;
-    std::cin >> name;
+    std::getline(std::cin >> std::ws, name);
     std::cout << "Enter the ingredient's type: (meat, vegetable, fruit, grain, dairy, seasoning, other): ";
     std::string type;
     std::cin >> type;
@@ -353,7 +353,7 @@ void buyIngredientMenu(Kitchen& simulation) {
 void buyDeviceMenu(Kitchen& simulation) {
     std::cout << "Enter the device's name: ";
     std::string name;
-    std::cin >> name;
+    std::getline(std::cin >> std::ws, name);
     try {
         simulation.buyDevice(Device(name, State::clean));
         std::cout << "Added device " << name << "!" << std::endl;
@@ -506,8 +506,6 @@ void simulationInterface(Kitchen& simulation) {
         }
     }
 }
-
-//FIXME: the program enters the infinite loop when the name has a space in it
 
 int main() {
     while (true) {
