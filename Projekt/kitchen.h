@@ -27,4 +27,5 @@ public:
     void buyIngredient(Ingredient new_ingredient);
     void cook(Recipe recipe);
     void cleanDevices();
+    void takeBreak(uint minutes);
 };

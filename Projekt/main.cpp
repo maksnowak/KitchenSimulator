@@ -254,28 +254,34 @@ void newRecipeMenu(Kitchen& simulation) {
             std::cin >> all_added_ingredients_choice;
         } while (all_added_ingredients_choice == 'y');
         std::vector<Device> devices;
-        if (simulation.getDevices().size() != 0) {
-            //TODO: you should be able to make a recipe without a device too
-            std::cout << "Which device does the recipe use? (enter the number): " << std::endl;
-            char all_added_devices_choice = 'n';
-            do {
-                for (unsigned long i = 0; i < simulation.getDevices().size(); i++) {
-                    std::cout << i + 1 << ". " << simulation.getDevices()[i].getName() << std::endl;
-                }
-                unsigned int choice;
-                validate(choice);
-                if (std::find(devices.begin(), devices.end(), simulation.getDevices()[choice - 1]) != devices.end())
-                    std::cout << "You have already added this device!" << std::endl;
-                else
-                    try {
-                        devices.push_back(simulation.getDevices()[choice - 1]);
+        std::cout << "Would you like to add a device? (y/n): ";
+        char add_device_choice;
+        std::cin >> add_device_choice;
+        if (add_device_choice == 'y') {
+            if (simulation.getDevices().size() != 0) {
+                std::cout << "Which device does the recipe use? (enter the number): " << std::endl;
+                char all_added_devices_choice = 'n';
+                do {
+                    for (unsigned long i = 0; i < simulation.getDevices().size(); i++) {
+                        std::cout << i + 1 << ". " << simulation.getDevices()[i].getName() << std::endl;
                     }
-                    catch (std::exception& e) {
-                        std::cout << e.what() << std::endl;
-                    }
-                std::cout << "Would you like to add another device? (y/n): ";
-                std::cin >> all_added_devices_choice;
-            } while (all_added_devices_choice == 'y');
+                    unsigned int choice;
+                    validate(choice);
+                    if (std::find(devices.begin(), devices.end(), simulation.getDevices()[choice - 1]) != devices.end())
+                        std::cout << "You have already added this device!" << std::endl;
+                    else
+                        try {
+                            devices.push_back(simulation.getDevices()[choice - 1]);
+                        }
+                        catch (std::exception& e) {
+                            std::cout << e.what() << std::endl;
+                        }
+                    std::cout << "Would you like to add another device? (y/n): ";
+                    std::cin >> all_added_devices_choice;
+                } while (all_added_devices_choice == 'y');
+            } else {
+                std::cout << "You don't have any devices!" << std::endl;
+            }
         }
         try {
             simulation.addRecipe(Recipe(name, time, to_difficulty(difficulty), ingredients, devices));

@@ -95,3 +95,7 @@ void Kitchen::cleanDevices() {
         kitchen_device.setState(State::clean);
     }
 }
+
+void Kitchen::takeBreak(uint minutes) {
+    time.skip_by(minutes);
+}
