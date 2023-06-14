@@ -1,5 +1,5 @@
 #include "catch_amalgamated.hpp"
-#include "../time.h"
+#include "../time_unit.h"
 #include "../incorrect_hour_exception.h"
 #include "../incorrect_minute_exception.h"
 

@@ -1,6 +1,6 @@
 #include "catch_amalgamated.hpp"
 #include "../kitchen.h"
-#include "../time.h"
+#include "../time_unit.h"
 #include "../missing_ingredients_exception.h"
 #include "../missing_devices_exception.h"
 #include "../dirty_device_exception.h"
