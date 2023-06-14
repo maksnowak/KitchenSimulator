@@ -14,6 +14,20 @@
 
 
 using json = nlohmann::json;
+
+void validate(uint& variable) {
+    while (true) {
+        std::cin >> variable;
+        if (variable > 0)
+            break;
+        else {
+            std::cout << "Invalid input! Please enter a valid value: ";
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+    }
+}
+
 // Interface functions
 
 auto to_ingredient_type(std::string type) {
@@ -213,7 +227,7 @@ void newRecipeMenu(Kitchen& simulation) {
         std::getline(std::cin >> std::ws, name);
         std::cout << "How long does it take to cook the recipe? (in minutes): ";
         unsigned int time;
-        std::cin >> time;
+        validate(time);
         std::cout << "What is the difficulty of the recipe? (easy, medium, hard): ";
         std::string difficulty;
         std::cin >> difficulty;
@@ -249,7 +263,7 @@ void newRecipeMenu(Kitchen& simulation) {
                     std::cout << i + 1 << ". " << simulation.getDevices()[i].getName() << std::endl;
                 }
                 unsigned int choice;
-                std::cin >> choice;
+                validate(choice);
                 if (std::find(devices.begin(), devices.end(), simulation.getDevices()[choice - 1]) != devices.end())
                     std::cout << "You have already added this device!" << std::endl;
                 else
@@ -340,7 +354,7 @@ void buyIngredientMenu(Kitchen& simulation) {
     std::cin >> type;
     std::cout << "Enter the ingredient's calories: ";
     unsigned int calories;
-    std::cin >> calories;
+    validate(calories);
     try {
         simulation.buyIngredient(Ingredient(name, to_ingredient_type(type), calories));
         std::cout << "Added ingredient " << name << "!" << std::endl;
@@ -354,12 +368,13 @@ void buyDeviceMenu(Kitchen& simulation) {
     std::cout << "Enter the device's name: ";
     std::string name;
     std::getline(std::cin >> std::ws, name);
-    try {
-        simulation.buyDevice(Device(name, State::clean));
+    Device device = Device(name, State::clean);
+
+    if (std::find(simulation.getDevices().begin(), simulation.getDevices().end(), device) != simulation.getDevices().end())
+        std::cout << "You already have this device!" << std::endl;
+    else {
+        simulation.buyDevice(device);
         std::cout << "Added device " << name << "!" << std::endl;
-    }
-    catch (std::exception& e) {
-        std::cout << e.what() << std::endl;
     }
 }
 
@@ -375,8 +390,8 @@ void cleanDeviceMenu(Kitchen& simulation) {
 void takeBreakMenu(Kitchen& simulation) {
     std::cout << "How long do you want to take a break for? (in minutes): ";
     unsigned int minutes;
-    std::cin >> minutes;
-    simulation.getTime().skip_by(minutes);
+    validate(minutes);
+    simulation.takeBreak(minutes);
     std::cout << "Took a break for " << minutes << " minutes!" << std::endl;
 }
 
