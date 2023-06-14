@@ -8,6 +8,93 @@
 using json = nlohmann::json;
 // Interface functions
 
+auto to_ingredient_type(std::string type) {
+    std::transform(type.begin(), type.end(), type.begin(), ::tolower);
+    if (type == "meat") {
+        return IngredientType::meat;
+    } else if (type == "vegetable") {
+        return IngredientType::vegetable;
+    } else if (type == "fruit") {
+        return IngredientType::fruit;
+    } else if (type == "grain") {
+        return IngredientType::grain;
+    } else if (type == "dairy") {
+        return IngredientType::dairy;
+    } else if (type == "seasoning") {
+        return IngredientType::seasoning;
+    } else if (type == "other") {
+        return IngredientType::other;
+    } else {
+        throw std::invalid_argument("Invalid ingredient type!");
+    }
+}
+
+auto to_difficulty(std::string difficulty) {
+    std::transform(difficulty.begin(), difficulty.end(), difficulty.begin(), ::tolower);
+    if (difficulty == "easy") {
+        return Difficulty::easy;
+    } else if (difficulty == "medium") {
+        return Difficulty::medium;
+    } else if (difficulty == "hard") {
+        return Difficulty::hard;
+    } else {
+        throw std::invalid_argument("Invalid difficulty!");
+    }
+}
+
+auto to_state(std::string state) {
+    std::transform(state.begin(), state.end(), state.begin(), ::tolower);
+    if (state == "clean") {
+        return State::clean;
+    } else if (state == "dirty") {
+        return State::dirty;
+    } else {
+        throw std::invalid_argument("Invalid state!");
+    }
+}
+
+std::string type_to_string(IngredientType type) {
+    if (type == IngredientType::meat) {
+        return "meat";
+    } else if (type == IngredientType::vegetable) {
+        return "vegetable";
+    } else if (type == IngredientType::fruit) {
+        return "fruit";
+    } else if (type == IngredientType::grain) {
+        return "grain";
+    } else if (type == IngredientType::dairy) {
+        return "dairy";
+    } else if (type == IngredientType::seasoning) {
+        return "seasoning";
+    } else if (type == IngredientType::other) {
+        return "other";
+    } else {
+        throw std::invalid_argument("Invalid ingredient type!");
+    }
+}
+
+std::string difficulty_to_string(Difficulty difficulty) {
+    if (difficulty == Difficulty::easy) {
+        return "easy";
+    } else if (difficulty == Difficulty::medium) {
+        return "medium";
+    } else if (difficulty == Difficulty::hard) {
+        return "hard";
+    } else {
+        throw std::invalid_argument("Invalid difficulty!");
+    }
+}
+
+std::string state_to_string(State state) {
+    if (state == State::clean) {
+        return "clean";
+    } else if (state == State::dirty) {
+        return "dirty";
+    } else {
+        throw std::invalid_argument("Invalid state!");
+    }
+}
+
 // Launching the program
 
 void mainMenu() {
@@ -173,16 +260,16 @@ int main() {
 
                 for (const auto& recipe : recipes) {
                     std::string name = recipe["Name"];
-                    // uint recipe_time = jsonData["Time"];         //dostaje objekt zamias liczby
-                    std::string difficulty = recipe["Difficulty"];      //TODO: zamienic na enum difficulty
+                    uint recipe_time = recipe["Time"];
+                    Difficulty difficulty = to_difficulty(recipe["Difficulty"]);
 
                     json ingredients = recipe["Ingredients"];
                     std::vector<Ingredient> recipe_ingredients;
                     for (const auto& ingredient : ingredients) {
                         std::string ingredientName = ingredient["Name"];
-                        std::string ingredientType = ingredient["Type"];        //TODO: zamienic na enum ingedientType
+                        IngredientType ingredientType = to_ingredient_type(ingredient["Type"]);
                         uint calories = ingredient["Calories"];
-                        recipe_ingredients.push_back(Ingredient(ingredientName, IngredientType::dairy, calories));
+                        recipe_ingredients.push_back(Ingredient(ingredientName, ingredientType, calories));
                     }
 
                     json devices = recipe["Devices"];
@@ -191,24 +278,24 @@ int main() {
                         std::string deviceName = device["Name"];
                         recipe_devices.push_back(Device(deviceName, State::clean));
                     }
-                    recipe_list.push_back(Recipe(name, 10, Difficulty::easy, recipe_ingredients, recipe_devices));
+                    recipe_list.push_back(Recipe(name, recipe_time, difficulty, recipe_ingredients, recipe_devices));
                 }
 
-                json ingredients = jsonData["Ingredients"];
+                json ingredients = jsonData["Kitchen ingredients"];
                 std::vector<Ingredient> ingredient_list;
                 for (const auto& ingredient : ingredients) {
                     std::string name = ingredient["Name"];
-                    IngredientType type = ingredient["Type"];
+                    IngredientType type = to_ingredient_type(ingredient["Type"]);
                     uint calories = ingredient["Calories"];
                     ingredient_list.push_back(Ingredient(name, type, calories));
                 }
 
-                json devices = jsonData["Devices"];
+                json devices = jsonData["Kitchen devices"];
                 std::vector<Device> device_list;
                 for (const auto& device : devices) {
                     std::string name = device["Name"];
-                    std::string state = device["State"];
-                    device_list.push_back(Device(name, State::clean));
+                    State state = to_state(device["State"]);
+                    device_list.push_back(Device(name, state));
                 }
 
                 Kitchen kitchen = Kitchen(time, recipe_list, ingredient_list, device_list);
