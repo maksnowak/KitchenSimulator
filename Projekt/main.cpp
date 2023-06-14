@@ -377,6 +377,7 @@ void seeDevicesMenu(Kitchen& simulation) {
 // Buying ingredients interface
 
 void buyIngredientMenu(Kitchen& simulation) {
+    simulation.takeBreak(15);
     auto logger = spdlog::get("simulation_log");
     std::cout << "Enter the ingredients name: ";
     std::string name;
@@ -399,30 +400,48 @@ void buyIngredientMenu(Kitchen& simulation) {
 }
 
 void buyDeviceMenu(Kitchen& simulation) {
+    simulation.takeBreak(20);
     auto logger = spdlog::get("simulation_log");
     std::cout << "Enter the device's name: ";
     std::string name;
     std::getline(std::cin >> std::ws, name);
-    Device device = Device(name, State::clean);
-
-    if (std::find(simulation.getDevices().begin(), simulation.getDevices().end(), device) != simulation.getDevices().end()) {
-        std::cout << "You already have this device!" << std::endl;
-        logger->warn("User tried to buy a device they already have");
+    bool already_have = false;
+    for (Device& device : simulation.getDevices()) {
+        if (device.getName() == name) {
+            std::cout << "You already have this device!" << std::endl;
+            logger->warn("User tried to buy a device they already have");
+            already_have = true;
+            break;
+        }
     }
-    else {
-        simulation.buyDevice(device);
+    if (!already_have) {
+        simulation.buyDevice(Device(name, State::clean));
         std::cout << "Added device " << name << "!" << std::endl;
         logger->info("User bought a device");
     }
+
 }
 
 // Cleaning devices interface
 
 void cleanDeviceMenu(Kitchen& simulation) {
+    bool dirty_devices = false;
+    for (Device& device : simulation.getDevices()) {
+        if (device.getState() == State::dirty) {
+            dirty_devices = true;
+        }
+    }
     auto logger = spdlog::get("simulation_log");
-    simulation.cleanDevices();
-    std::cout << "Cleaned all devices!" << std::endl;
-    logger->info("User cleaned all devices");
+    if (dirty_devices) {
+        simulation.takeBreak(10);
+        simulation.cleanDevices();
+        std::cout << "Cleaned all devices!" << std::endl;
+        logger->info("User cleaned all devices");
+    } else {
+        std::cout << "You don't have any dirty devices!" << std::endl;
+        logger->info("User tried to clean all devices but they were all clean");
+    }
+
 }
 
 // Taking a break interface
@@ -451,51 +470,41 @@ void simulationInterface(Kitchen& simulation) {
         ActionChoice action_choice = getActionChoice();
         if (action_choice == ActionChoice::Cook) {
             cookMenu(simulation);
-            logger->info("User chose to cook");
             continue;
         }
         else if (action_choice == ActionChoice::NewRecipe) {
             newRecipeMenu(simulation);
-            logger->info("User chose to create a new recipe");
             continue;
         }
         else if (action_choice == ActionChoice::SeeRecipes) {
             seeRecipesMenu(simulation);
-            logger->info("User chose to see recipes");
             continue;
         }
         else if (action_choice == ActionChoice::SeeIngredients) {
             seeIngredientsMenu(simulation);
-            logger->info("User chose to see ingredients");
             continue;
         }
         else if (action_choice == ActionChoice::SeeDevices) {
             seeDevicesMenu(simulation);
-            logger->info("User chose to see devices");
             continue;
         }
         else if (action_choice == ActionChoice::BuyIngredient) {
             buyIngredientMenu(simulation);
-            logger->info("User chose to buy an ingredient");
             continue;
         }
         else if (action_choice == ActionChoice::BuyDevice) {
             buyDeviceMenu(simulation);
-            logger->info("User chose to buy a device");
             continue;
         }
         else if (action_choice == ActionChoice::CleanDevices) {
             cleanDeviceMenu(simulation);
-            logger->info("User chose to clean devices");
             continue;
         }
         else if (action_choice == ActionChoice::TakeBreak) {
             takeBreakMenu(simulation);
-            logger->info("User chose to take a break");
             continue;
         }
         else if (action_choice == ActionChoice::Exit) {
-            logger->info("User chose to exit the simulation");
             while (true) {
                 exitSimulationMenu();
                 try {
@@ -579,6 +588,7 @@ void simulationInterface(Kitchen& simulation) {
         }
     }
     logger->info("Simulation ended");
+    spdlog::drop("simulation_log");
 }
 
 int main() {

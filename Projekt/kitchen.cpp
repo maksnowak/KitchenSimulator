@@ -83,8 +83,10 @@ void Kitchen::cook(Recipe recipe) {
         ingredients.erase(ingredient_position);
     }
     for (Device& kitchen_device : devices) {
-        if (std::find(recipe.getDevices().begin(), recipe.getDevices().end(), kitchen_device) != recipe.getDevices().end()) {
-            kitchen_device.setState(State::dirty);
+        for (Device& device : recipe.getDevices()) {
+            if (kitchen_device == device) {
+                kitchen_device.setState(State::dirty);
+            }
         }
     }
     time.skip_by(recipe.getTime());
