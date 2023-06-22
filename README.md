@@ -1,6 +1,18 @@
-# PROI - dokumentacja wstępna projektu
+# KitchenSimulator
 
-*Adam Czupryński, Maksymilian Nowak*
+This repository contains a C++ project written for Object-Oriented Programming class at Warsaw University of Technology
+It is a simple kitchen simulation - you can buy ingredients, devices, make recipes, etc.
+
+In order to launch the program correctly, you have to:
+
+1. Download [the spdlog include directory](https://github.com/gabime/spdlog/tree/v1.x/include/spdlog) and [nlohmann's json header file](https://github.com/nlohmann/json/blob/develop/single_include/nlohmann/json.hpp) 
+2. Place all the files in the root directory of the repository
+
+You can find fragments of the original documentation below (in Polish)
+
+---
+
+# PROI - dokumentacja wstępna projektu
 
 ## Cel i założenie projektu
 
@@ -23,7 +35,7 @@ Kuchnia działa przy następujących założeniach:
 
 ## Uruchomienie programu
 
-1. Skolonowanie repozytorium za pomocą komendy: `git clone https://gitlab-stud.elka.pw.edu.pl/mnowak1/Maksymilian_Nowak_PROI23L.git` lub jego pobranie
+1. Skolonowanie repozytorium za pomocą komendy: `git clone https://github.com/maksnowak/KitchenSimulator.git` lub jego pobranie
 2. Kompilacja programu: `g++ -std=c++20 <ścieżka do repozytorium>/*.cpp -o <ścieżka do repozytorium>/KitchenSimulator -I <ścieżka do programu> -Wall -Werror`
 3. Uruchomienie programu (zakładając że znajdujemy się w katalogu repozytorium): `./KitchenSimulator`
 
@@ -38,11 +50,3 @@ Najważniejsze klasy, które znajdują się w programie:
 - Klasa składnika - zawiera nazwę, typ (mięso, nabiał, itp.) oraz wartość kaloryczną
 - Klasa przyrządu - zawiera nazwę, stan czystości oraz metody jej działania
 - Klasa jednostki czasu - zawiera godzinę w formacie `godzina:minuta` oraz metody pozwalające na pominięcie okresu czasu określonego przez użytkownika
-
-## Relacje między poszczególnymi klasami
-
-![](https://drive.google.com/uc?export=view&id=1-8rTOxuO9gBIH18Se3j1Irwk7a7C7bfw)
-
-## Dodatkowe funkcje projektu
-Projekt umożliwia zapisywanie aktualnego stanu kuchni do pliku JSON a przy uruchamianiu symulacji istnieje możliwość wczytania istniejącej już symulacji. Wszystkie klasy projektu przeszły testy jednostkowe sprawdzające ich poprawne działanie w skrajnych przypadkach.
-[](https://drive.google.com/uc?id=1sxgWBhjks9O90A9eLVgH1G7n1S8lzgmh)
