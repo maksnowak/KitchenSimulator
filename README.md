@@ -7,6 +7,7 @@ In order to launch the program correctly, you have to:
 
 1. Download [the spdlog include directory](https://github.com/gabime/spdlog/tree/v1.x/include/spdlog) and [nlohmann's json header file](https://github.com/nlohmann/json/blob/develop/single_include/nlohmann/json.hpp) 
 2. Place all the files in the root directory of the repository
+3. To launch unit tests, download the `catch_amalgamated` files from [here](https://github.com/catchorg/Catch2/tree/devel/extras) and place them in the `tests` directory
 
 You can find fragments of the original documentation below (in Polish)
 
