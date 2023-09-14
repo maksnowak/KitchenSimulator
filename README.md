@@ -1,6 +1,7 @@
 # KitchenSimulator
 
-This repository contains a C++ project written for Object-Oriented Programming class at Warsaw University of Technology
+This repository contains a C++ project written for Object-Oriented Programming class at Warsaw University of Technology.
+
 It is a simple kitchen simulation - you can buy ingredients, devices, make recipes, etc.
 
 In order to launch the program correctly, you have to:
